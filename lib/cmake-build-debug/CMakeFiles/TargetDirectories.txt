@@ -1,0 +1,3 @@
+D:/programirovanie/githubApplications/sudoku/lib/cmake-build-debug/CMakeFiles/lib.dir
+D:/programirovanie/githubApplications/sudoku/lib/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/programirovanie/githubApplications/sudoku/lib/cmake-build-debug/CMakeFiles/rebuild_cache.dir
