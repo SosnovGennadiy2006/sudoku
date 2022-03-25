@@ -1,6 +1,10 @@
 #include <iostream>
+#include "SudokuTable.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    SudokuTable table;
+    table.resize(9);
+    table.print();
+
     return 0;
 }
