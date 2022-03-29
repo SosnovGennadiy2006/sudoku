@@ -92,6 +92,12 @@
 		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuAreas/SudokuArea.h">
 			<Option target="lib"/>
 		</Unit>
+		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuPrinter.cpp">
+			<Option target="lib"/>
+		</Unit>
+		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuPrinter.h">
+			<Option target="lib"/>
+		</Unit>
 		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuTable.cpp">
 			<Option target="lib"/>
 		</Unit>

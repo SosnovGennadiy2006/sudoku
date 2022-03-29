@@ -9,4 +9,4 @@ add_executable(lib main.cpp
         SudokuAreas/SudokuArea.cpp
         SudokuAreas/SudokuArea.h
         Iterator/SudokuIterator.cpp
-        Iterator/SudokuIterator.h)
+        Iterator/SudokuIterator.h SudokuPrinter.cpp SudokuPrinter.h)

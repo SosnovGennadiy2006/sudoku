@@ -5,6 +5,32 @@
 #include "SudokuTable.h"
 
 //-------------
+// Private methods
+//-------------
+
+/**
+ * Function sets number of numbers in sudoku
+ * in one rectangle
+ */
+void SudokuTable::init_numbers()
+{
+    if (this->size == 0)
+        return;
+
+    this->numberInRect_h = static_cast<int>(this->size);
+    for (int i = 2; i * i <= this->size; i++)
+    {
+        if (this->size % i == 0)
+        {
+            this->numberInRect_h = i;
+        }
+    }
+    this->numberInRect_w = static_cast<int>(this->size) / this->numberInRect_h;
+    if (this->numberInRect_h == this->size)
+        std::swap(this->numberInRect_h, this->numberInRect_w);
+}
+
+//-------------
 // Constructors and destructor
 //-------------
 
@@ -12,11 +38,13 @@
  * Default constructor
  *
  * @param size
- *  - new sudoku size
+*   - new sudoku size
+ * @param borderType
+ *  - new sudoku border type
  */
 SudokuTable::SudokuTable(size_t size)
 {
-    this->size = 0;
+    this->size = size;
     this->table = new int*[this->size];
     for (size_t i = 0; i < this->size; i++)
     {
@@ -27,6 +55,8 @@ SudokuTable::SudokuTable(size_t size)
             this->table[i][j] = 0;
         }
     }
+
+    this->init_numbers();
 }
 
 /**
@@ -45,6 +75,8 @@ SudokuTable::SudokuTable(const SudokuTable &other)
             this->table[i][j] = 0;
         }
     }
+
+    this->init_numbers();
 }
 
 /**
@@ -64,37 +96,14 @@ SudokuTable::~SudokuTable()
 //-------------
 
 /**
- * Method that returns number order
- *
- * @param number
- *  - the number for which the order must be calculated
- * @return
- *  The order of the entered number
- */
-int SudokuTable::numberOrder(int number)
-{
-    if (number == 0) return 1;
-
-    int order = 0;
-
-    while(number){
-        number /= 10;
-
-        ++order;
-    }
-
-    return order;
-}
-
-/**
  * Resize sudoku table
  *
  * @param size
  *  - new size
  */
-void SudokuTable::resize(size_t size)
+void SudokuTable::resize(size_t _size)
 {
-    this->size = size;
+    this->size = _size;
     this->table = new int*[this->size];
     for (size_t i = 0; i < this->size; i++)
     {
@@ -105,31 +114,8 @@ void SudokuTable::resize(size_t size)
             this->table[i][j] = 0;
         }
     }
-}
 
-/**
- * Print table with selected border type
- * @param type
- *  - border type
- */
-void SudokuTable::print(const borderTypes& type)
-{
-    int cellSize = SudokuTable::numberOrder(static_cast<int>(this->size));
-
-    if (type == borderTypes::borderNone)
-    {
-        for (size_t i = 0; i < this->size; i++)
-        {
-            for (size_t j = 0; j < this->size; j++)
-            {
-                std::cout << this->table[i][j];
-                fill_n(std::ostream_iterator<char>(std::cout), \
-                        cellSize - SudokuTable::numberOrder(this->table[i][j]), ' ');
-                std::cout << ' ';
-            }
-            std::cout << std::endl;
-        }
-    }
+    this->init_numbers();
 }
 
 //-------------
@@ -137,15 +123,27 @@ void SudokuTable::print(const borderTypes& type)
 //-------------
 
 // Getter for table size
-inline size_t SudokuTable::getSize() const
+size_t SudokuTable::getSize() const
 {
     return this->size;
 }
 
 // Getter for table
-inline int** SudokuTable::getTable() const
+int** SudokuTable::getTable() const
 {
     return this->table;
+}
+
+// Getter for number of numbers in one rect in width
+size_t SudokuTable::getNumberInRectInWidth() const
+{
+    return this->numberInRect_w;
+}
+
+// Getter for number of numbers in one rect in height
+size_t SudokuTable::getNumberInRectInHeight() const
+{
+    return this->numberInRect_h;
 }
 
 //-------------

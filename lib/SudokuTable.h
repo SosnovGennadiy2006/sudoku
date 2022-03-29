@@ -8,55 +8,38 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <sstream>
 
-//-------------
-// Enums
-//-------------
-
-enum borderTypes
-{
-    borderNone,
-    borderOrdinary,
-    borderDouble
-};
-
-enum HorizontalSeparator{
-    SEPARATOR_TOP,
-    SEPARATOR_MIDDLE,
-    SEPARATOR_BOTTOM
-};
-
-// Container for sudoku, without logics
+/**
+ * Container for sudoku, without logics
+ */
 class SudokuTable {
 private:
     size_t size; // size
     int** table; // table
 
-    // Table Style variables
-    std::string style_line_horizontal;
-    std::string style_line_vertical;
-    std::string style_line_cross;
-    std::string style_t_intersect_right;
-    std::string style_t_intersect_left;
-    std::string style_t_intersect_top;
-    std::string style_t_intersect_bottom;
-    std::string style_edge_top_left;
-    std::string style_edge_top_right;
-    std::string style_edge_bottom_left;
-    std::string style_edge_bottom_right;
+    // the number of numbers in width in one rectangle
+    size_t numberInRect_w = 0;
+    // the number of numbers in height in one rectangle
+    size_t numberInRect_h = 0;
 
-    void printHorizontalSeparator(int maxWidth, const HorizontalSeparator& separator) const;
+    /**
+     * Function sets number of numbers in sudoku
+     * in one rectangle
+     */
+    void init_numbers();
+
 public:
     //-------------
     // Constructors and destructor
     //-------------
 
-    /**
-     * Default constructor
-     *
-     * @param size
-     *  - new sudoku size
-     */
+     /**
+      * Default constructor
+      *
+      * @param size
+     *   - new sudoku size
+      */
     explicit SudokuTable(size_t size = 0);
 
     /**
@@ -74,16 +57,6 @@ public:
     //-------------
 
     /**
-     * Method that returns number order
-     *
-     * @param number
-     *  - the number for which the order must be calculated
-     * @return
-     *  The order of the entered number
-     */
-    static int numberOrder(int number);
-
-    /**
      * Resize sudoku table
      *
      * @param size
@@ -91,21 +64,19 @@ public:
      */
     void resize(size_t size);
 
-    /**
-     * Print table with selected border type
-     * @param type
-     *  - border type
-     */
-    void print(const borderTypes& type = borderTypes::borderNone);
-
     //-------------
     // Getters
     //-------------
 
     // Getter for table size
-    inline size_t getSize() const;
+    size_t getSize() const;
     // Getter for table
-    inline int** getTable() const;
+    int** getTable() const;
+
+    // Getter for number of numbers in one rect in width
+    size_t getNumberInRectInWidth() const;
+    // Getter for number of numbers in one rect in height
+    size_t getNumberInRectInHeight() const;
 
     //-------------
     // Operators
