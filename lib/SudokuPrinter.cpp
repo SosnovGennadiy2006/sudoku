@@ -16,13 +16,13 @@
  * @return
  *  The order of the entered number
  */
-int SudokuPrinter::numberOrder(int number)
-{
-    if (number == 0) return 1;
+int SudokuPrinter::numberOrder(int number) {
+    if (number == 0)
+        return 1;
 
     int order = 0;
 
-    while(number){
+    while (number) {
         number /= 10;
 
         ++order;
@@ -40,12 +40,43 @@ int SudokuPrinter::numberOrder(int number)
  * @return
  *  a repeated string
  */
-std::string SudokuPrinter::repeat(const std::string& str, int n)
-{
+std::string SudokuPrinter::repeat(const std::string &str, int n) {
     std::ostringstream os;
     for (int i = 0; i < n; i++)
         os << str;
     return os.str();
+}
+
+/**
+ * Print the number in the selected position in the table
+ * @param stream
+ *  - selected stream
+ * @param maxWidth
+ *  - max width for number
+ * @param i
+ *  - row
+ * @param j
+ *  - column
+ * @param format
+ *  - selected format (dec / hex)
+ */
+void SudokuPrinter::printNumber(std::ostream &stream, int maxWidth, size_t i, size_t j,
+                                numberFormat _format, bool _areZerosVisible) const {
+    if (!_areZerosVisible && this->table(i, j) == 0)
+    {
+        fill_n(std::ostream_iterator<char>(stream), maxWidth, ' ');
+        return;
+    }
+    if (_format == SudokuPrinter::numberFormat::dec) {
+        stream << this->table(i, j);
+        fill_n(std::ostream_iterator<char>(stream), \
+                        maxWidth - SudokuPrinter::numberOrder(this->table(i, j)), ' ');
+    } else {
+        std::string number_hex = SudokuPrinter::convertToHex(this->table(i, j));
+        stream << number_hex;
+        fill_n(std::ostream_iterator<char>(stream), \
+                        maxWidth - number_hex.size(), ' ');
+    }
 }
 
 /**
@@ -59,8 +90,8 @@ std::string SudokuPrinter::repeat(const std::string& str, int n)
  * @param separator_t
  *  - table lines type for separator
  */
-void SudokuPrinter::printHorizontalSeparator(std::ostream& stream, int maxWidth, int columns, HorizontalSeparator separator_pos) const
-{
+void SudokuPrinter::printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns,
+                                             HorizontalSeparator separator_pos) const {
     printHorizontalSeparator(stream, maxWidth, columns, separator_pos, this->getBorderType());
 }
 
@@ -77,8 +108,8 @@ void SudokuPrinter::printHorizontalSeparator(std::ostream& stream, int maxWidth,
  * @param borderType
  *  - selected type for separator border lines
  */
-void SudokuPrinter::printHorizontalSeparator(std::ostream& stream, int maxWidth, int columns, HorizontalSeparator separator_pos, size_t borderType) const
-{
+void SudokuPrinter::printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns,
+                                             HorizontalSeparator separator_pos, size_t borderType) const {
     for (int col = 0; col < columns; ++col) {
         switch (separator_pos) {
             case HorizontalSeparator::SEPARATOR_TOP: {
@@ -113,23 +144,18 @@ void SudokuPrinter::printHorizontalSeparator(std::ostream& stream, int maxWidth,
  *  - selected border type
  * @return
  */
-size_t SudokuPrinter::getLinesTypeIndex(const SudokuPrinter::borderTypes &type)
-{
+size_t SudokuPrinter::getLinesTypeIndex(const SudokuPrinter::borderTypes &type) {
     switch (type) {
-        case SudokuPrinter::borderTypes::borderNone:
-        {
+        case SudokuPrinter::borderTypes::borderNone: {
             return 3;
         }
-        case SudokuPrinter::borderTypes::borderLined:
-        {
+        case SudokuPrinter::borderTypes::borderLined: {
             return 1;
         }
-        case SudokuPrinter::borderTypes::borderBasic:
-        {
+        case SudokuPrinter::borderTypes::borderBasic: {
             return 0;
         }
-        case SudokuPrinter::borderTypes::borderDouble:
-        {
+        case SudokuPrinter::borderTypes::borderDouble: {
             return 2;
         }
     }
@@ -144,8 +170,7 @@ size_t SudokuPrinter::getLinesTypeIndex(const SudokuPrinter::borderTypes &type)
  * @param table
  *  - sudoku table, that will be printed
  */
-SudokuPrinter::SudokuPrinter(const SudokuTable &table)
-{
+SudokuPrinter::SudokuPrinter(const SudokuTable &table) {
     this->table = table;
 }
 
@@ -155,19 +180,24 @@ SudokuPrinter::SudokuPrinter(const SudokuTable &table)
  *  - sudoku table, that will be printed
  * @param type
  *  - table lines type
+ * @param format
+ *  - table numbers format
  */
- SudokuPrinter::SudokuPrinter(const SudokuTable &table, SudokuPrinter::borderTypes type)
- {
-     this->table = table;
- }
+SudokuPrinter::SudokuPrinter(const SudokuTable &table, SudokuPrinter::borderTypes type,
+                             SudokuPrinter::numberFormat _format,
+                             bool areZerosVisible) {
+    this->table = table;
+    this->tableLinesType = getLinesTypeIndex(type);
+    this->format = _format;
+    this->areZerosVisible = areZerosVisible;
+}
 
 /**
  * Copy constructor
  *
  * Doesn't copy border type
  */
-SudokuPrinter::SudokuPrinter(const SudokuPrinter& other)
-{
+SudokuPrinter::SudokuPrinter(const SudokuPrinter &other) {
     this->table = other.getTable();
 }
 
@@ -176,13 +206,106 @@ SudokuPrinter::SudokuPrinter(const SudokuPrinter& other)
 //-------------
 
 /**
+ * Convert decimal to hexadecimal
+ * @param number
+ *  - number to convert
+ * @return
+ *  - hexadecimal in string
+ */
+std::string SudokuPrinter::convertToHex(int number) {
+    if (number == 0)
+        return "0";
+
+    std::string ans;
+    int rem;
+
+    while (number > 0) {
+        rem = number % 17;
+
+        switch (rem) {
+            case 0:
+                ans += "0";
+                break;
+            case 1:
+                ans += "1";
+                break;
+            case 2:
+                ans += "2";
+                break;
+            case 3:
+                ans += "3";
+                break;
+            case 4:
+                ans += "4";
+                break;
+            case 5:
+                ans += "5";
+                break;
+            case 6:
+                ans += "6";
+                break;
+            case 7:
+                ans += "7";
+                break;
+            case 8:
+                ans += "8";
+                break;
+            case 9:
+                ans += "9";
+                break;
+            case 10:
+                ans += "A";
+                break;
+            case 11:
+                ans += "B";
+                break;
+            case 12:
+                ans += "C";
+                break;
+            case 13:
+                ans += "D";
+                break;
+            case 14:
+                ans += "E";
+                break;
+            case 15:
+                ans += "F";
+                break;
+            case 16:
+                ans += "G";
+                break;
+            default:
+                break;
+        }
+
+        number /= 17;
+    }
+
+    return ans;
+}
+
+/**
+ * Static method that print sudoku table
+ * @param stream
+ *  - selected stream
+ * @param table
+ *  - sudoku table for print
+ * @param type
+ *  - selected border type
+ */
+void SudokuPrinter::print(std::ostream &stream, const SudokuTable &table,
+                          const borderTypes &type, const numberFormat &format, bool areZerosVisibility) {
+    SudokuPrinter printer(table);
+    printer.print(stream, type, format, areZerosVisibility);
+}
+
+/**
  * Method to print sudoku to stream
  * @param stream
  *  - selected stream
  */
-void SudokuPrinter::print(std::ostream& stream)
-{
-    this->print(stream, this->getBorderType());
+void SudokuPrinter::print(std::ostream &stream) const {
+    this->print(stream, this->getBorderType(), SudokuPrinter::numberFormat::dec, this->areZerosVisible);
 }
 
 /**
@@ -192,8 +315,19 @@ void SudokuPrinter::print(std::ostream& stream)
  * @param type
  *  - selected border type
  */
-void SudokuPrinter::print(std::ostream& stream, const SudokuPrinter::borderTypes& type)
-{
+void SudokuPrinter::print(std::ostream &stream, const borderTypes &type) const {
+    this->print(stream, type, this->format, this->areZerosVisible);
+}
+
+/**
+ * Method to print sudoku to stream
+ * @param stream
+ *  - selected stream
+ * @param type
+ *  - selected border type
+ */
+void SudokuPrinter::print(std::ostream &stream, const SudokuPrinter::borderTypes &type,
+                          const numberFormat &_format, bool _areZerosVisible) const {
     if (this->table.getSize() == 0)
         return;
 
@@ -201,36 +335,35 @@ void SudokuPrinter::print(std::ostream& stream, const SudokuPrinter::borderTypes
     size_t tableSize = this->table.getSize();
     size_t numberInRect_w = this->table.getNumberInRectInWidth();
     size_t numberInRect_h = this->table.getNumberInRectInHeight();
-    int cellSize = SudokuPrinter::numberOrder(static_cast<int>(tableSize));
+    int cellSize;
 
-    if (type == borderTypes::borderNone)
-    {
-        for (size_t i = 0; i < tableSize; i++)
-        {
-            for (size_t j = 0; j < tableSize; j++)
-            {
-                stream << this->table(i, j);
-                fill_n(std::ostream_iterator<char>(stream), \
-                        cellSize - SudokuPrinter::numberOrder(this->table(i, j)), ' ');
+    if (_format == numberFormat::dec) {
+        cellSize = SudokuPrinter::numberOrder(static_cast<int>(tableSize));
+    } else {
+        cellSize = static_cast<int>(SudokuPrinter::convertToHex(static_cast<int>(tableSize)).size());
+    }
+
+    if (type == borderTypes::borderNone) {
+        for (size_t i = 0; i < tableSize; i++) {
+            for (size_t j = 0; j < tableSize; j++) {
+                this->printNumber(stream, cellSize, i, j, _format, this->areZerosVisible);
                 stream << ' ';
             }
             stream << std::endl;
         }
-    }else {
+    } else {
         int rectWidth = static_cast<int>(numberInRect_w * cellSize + numberInRect_w + 1);
 
-        for (int i = 0; i < tableSize; i++) {
+        for (size_t i = 0; i < tableSize; i++) {
             if (i == 0) {
                 this->printHorizontalSeparator(stream, rectWidth, static_cast<int>(numberInRect_h), \
                 HorizontalSeparator::SEPARATOR_TOP, getLinesTypeIndex(type));
             }
 
             stream << this->tableLines[linesTypeIndex][1];
-            for (int j = 0; j < tableSize; j++) {
-
-                stream << ' ' << this->table(i, j);
-                fill_n(std::ostream_iterator<char>(stream), \
-                        cellSize - SudokuPrinter::numberOrder(this->table(i, j)), ' ');
+            for (size_t j = 0; j < tableSize; j++) {
+                stream << ' ';
+                this->printNumber(stream, cellSize, i, j, _format, this->areZerosVisible);
                 if (j % numberInRect_w == numberInRect_w - 1)
                     stream << ' ' << this->tableLines[linesTypeIndex][1];
             }
@@ -256,8 +389,7 @@ void SudokuPrinter::print(std::ostream& stream, const SudokuPrinter::borderTypes
  * @return
  *  - printer table
  */
-SudokuTable SudokuPrinter::getTable() const
-{
+SudokuTable SudokuPrinter::getTable() const {
     return this->table;
 }
 
@@ -266,19 +398,39 @@ SudokuTable SudokuPrinter::getTable() const
  * @return
  *  - printer border type
  */
-SudokuPrinter::borderTypes SudokuPrinter::getBorderType() const
-{
-    switch (this->tableLinesType)
-    {
-        case 3: return SudokuPrinter::borderTypes::borderNone;
-        case 0: return SudokuPrinter::borderTypes::borderBasic;
-        case 1: return SudokuPrinter::borderTypes::borderLined;
-        case 2: return SudokuPrinter::borderTypes::borderDouble;
-        default:
-        {
+SudokuPrinter::borderTypes SudokuPrinter::getBorderType() const {
+    switch (this->tableLinesType) {
+        case 3:
+            return SudokuPrinter::borderTypes::borderNone;
+        case 0:
+            return SudokuPrinter::borderTypes::borderBasic;
+        case 1:
+            return SudokuPrinter::borderTypes::borderLined;
+        case 2:
+            return SudokuPrinter::borderTypes::borderDouble;
+        default: {
             assert("Unknown error with border type!");
         }
     }
+    return SudokuPrinter::borderTypes::borderNone;
+}
+
+/**
+ * Getter for number format for numbers in the table
+ * @return
+ *  - number format
+ */
+SudokuPrinter::numberFormat SudokuPrinter::getNumberFormat() const {
+    return this->format;
+}
+
+/**
+     * Getter for zeros visibility for numbers in the table
+     * @return
+     *  - zeros visibility
+     */
+bool SudokuPrinter::getZerosVisibility() const {
+    return this->areZerosVisible;
 }
 
 //-------------
@@ -290,8 +442,7 @@ SudokuPrinter::borderTypes SudokuPrinter::getBorderType() const
  * @param type
  *  - new table border type
  */
-void SudokuPrinter::setBorderType(SudokuPrinter::borderTypes type)
-{
+void SudokuPrinter::setBorderType(SudokuPrinter::borderTypes type) {
     this->tableLinesType = SudokuPrinter::getLinesTypeIndex(type);
 }
 
@@ -300,7 +451,24 @@ void SudokuPrinter::setBorderType(SudokuPrinter::borderTypes type)
  * @param table
  *  - new printer table
  */
-void SudokuPrinter::setTable(const SudokuTable& _table)
-{
+void SudokuPrinter::setTable(const SudokuTable &_table) {
     this->table = _table;
+}
+
+/**
+ * Set current printer number format
+ * @param format
+ *  - new number format for numbers in printer
+ */
+void SudokuPrinter::setNumberFormat(const SudokuPrinter::numberFormat &_format) {
+    this->format = _format;
+}
+
+/**
+ * Set current printer zeros visibility
+ * @param state
+ *  - new value for zeros visibility
+ */
+void SudokuPrinter::setZerosVisible(bool state) {
+    areZerosVisible = state;
 }

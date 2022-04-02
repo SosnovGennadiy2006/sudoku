@@ -4,6 +4,23 @@
 #include "SudokuTable.h"
 #include "SudokuPrinter.h"
 
+//5 0 0 0 15 0 0 0 0 13 0 6 0 0 0 0
+//16 0 0 4 0 0 1 0 8 0 3 12 2 6 9 7
+//3 0 0 0 6 0 0 16 0 0 14 0 0 12 15 0
+//14 0 6 0 9 0 0 0 0 5 0 15 0 11 0 3
+//0 0 1 0 0 0 5 0 0 15 0 0 0 10 16 0
+//7 0 0 3 0 0 0 0 14 10 0 0 0 0 0 0
+//0 5 4 16 14 0 0 0 7 8 0 2 3 15 0 0
+//9 10 15 0 3 8 0 0 6 0 5 0 14 0 1 2
+//0 0 0 8 4 15 9 0 0 16 13 0 12 0 0 0
+//13 14 0 0 0 0 2 0 3 9 0 5 11 0 0 16
+//0 0 10 0 0 0 0 5 15 0 0 0 0 3 6 0
+//4 3 0 0 7 16 0 6 0 0 0 0 13 5 10 15
+//0 0 3 6 0 7 15 2 0 14 16 0 9 1 11 0
+//12 9 11 5 8 0 16 0 1 3 0 10 0 0 13 0
+//0 0 16 2 1 13 0 4 0 0 11 0 8 14 3 0
+//0 4 14 13 0 0 3 9 12 0 0 8 0 0 0 10
+
 class MBuf: public std::stringbuf {
 public:
     int sync() override {
@@ -21,12 +38,17 @@ int main() {
 
     // Main part
     SudokuTable table;
-    table.resize(9);
+    table.resize(16);
+    std::cin >> table;
 
     SudokuPrinter printer(table);
 
-    // Print to console
-    printer.print(std::cout, SudokuPrinter::borderTypes::borderDouble);
+    printer.print(std::cout, SudokuPrinter::borderTypes::borderLined);
+
+    printer.setNumberFormat(SudokuPrinter::numberFormat::hex);
+    printer.setZerosVisible(false);
+
+    printer.print(std::cout, SudokuPrinter::borderTypes::borderLined);
 
     std::system("pause");
 }

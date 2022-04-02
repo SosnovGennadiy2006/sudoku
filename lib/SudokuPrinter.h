@@ -21,12 +21,19 @@ public:
     /**
      * Table border types
      */
-    enum borderTypes
-    {
+    enum borderTypes {
         borderNone,
         borderBasic,
         borderLined,
         borderDouble
+    };
+
+    /**
+     * Table number format for numbers in table
+     */
+    enum numberFormat {
+        dec,
+        hex
     };
 
 private:
@@ -49,16 +56,32 @@ private:
      * @return
      *  a repeated string
      */
-    static std::string repeat(const std::string& str, int n);
+    static std::string repeat(const std::string &str, int n);
 
     /**
      * Positions for horizontal separator
      */
-    enum HorizontalSeparator{
+    enum HorizontalSeparator {
         SEPARATOR_TOP,
         SEPARATOR_MIDDLE,
         SEPARATOR_BOTTOM
     };
+
+    /**
+     * Print the number in the selected position in the table
+     * @param stream
+     *  - selected stream
+     * @param maxWidth
+     *  - max width for number
+     * @param i
+     *  - row
+     * @param j
+     *  - column
+     * @param format
+     *  - selected format (dec / hex)
+     */
+    void printNumber(std::ostream &stream, int maxWidth, size_t i, size_t j,
+                     numberFormat format, bool areZerosVisible) const;
 
     /**
      * Print horizontal line between two rows
@@ -71,7 +94,8 @@ private:
      * @param separator_pos
      *  - position for separator in table
      */
-    void printHorizontalSeparator(std::ostream& stream, int maxWidth, int columns, HorizontalSeparator separator_pos) const;
+    void
+    printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos) const;
 
     /**
      * Print horizontal line between two rows
@@ -86,7 +110,8 @@ private:
      * @param borderType
      *  - selected type for separator border lines
      */
-    void printHorizontalSeparator(std::ostream& stream, int maxWidth, int columns, HorizontalSeparator separator_pos, size_t borderType) const;
+    void printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos,
+                                  size_t borderType) const;
 
     /**
      * All table lines types
@@ -107,9 +132,15 @@ private:
      * @return
      *  - index for selected border type in table
      */
-    static size_t getLinesTypeIndex(const SudokuPrinter::borderTypes& type);
+    static size_t getLinesTypeIndex(const SudokuPrinter::borderTypes &type);
 
     SudokuTable table;
+
+    // The format for numbers in table
+    numberFormat format = numberFormat::dec;
+
+    // Are zeros visible
+    bool areZerosVisible = true;
 public:
     //-------------
     // Constructors and destructor
@@ -120,7 +151,7 @@ public:
      * @param table
      *  - sudoku table, that will be printed
      */
-    explicit SudokuPrinter(const SudokuTable& table);
+    explicit SudokuPrinter(const SudokuTable &table);
 
     /**
      * Default constructor with table lines type
@@ -128,24 +159,49 @@ public:
      *  - sudoku table, that will be printed
      * @param type
      *  - table lines type
+     * @param format
+     *  - table numbers format
      */
-    SudokuPrinter(const SudokuTable& table, SudokuPrinter::borderTypes type);
+    explicit SudokuPrinter(const SudokuTable &table, SudokuPrinter::borderTypes type, \
+    SudokuPrinter::numberFormat format = SudokuPrinter::numberFormat::dec, bool areZerosVisible = true);
 
     /**
      * Copy constructor
      */
-    SudokuPrinter(const SudokuPrinter& other);
+    SudokuPrinter(const SudokuPrinter &other);
 
     //-------------
     // Methods
     //-------------
 
     /**
+     * Convert decimal to hexadecimal
+     * @param number
+     *  - number to convert
+     * @return
+     *  - hexadecimal in string
+     */
+    static std::string convertToHex(int number);
+
+    /**
+     * Static method that print sudoku table
+     * @param stream
+     *  - selected stream
+     * @param table
+     *  - sudoku table for print
+     * @param type
+     *  - selected border type
+     */
+    static void print(std::ostream &stream, const SudokuTable &table,
+                      const borderTypes &type = borderTypes::borderNone, const numberFormat &format = numberFormat::dec,
+                      bool areZerosVisible = true);
+
+    /**
      * Method to print sudoku to stream
      * @param stream
      *  - selected stream
      */
-    void print(std::ostream& stream);
+    void print(std::ostream &stream) const;
 
     /**
      * Method to print sudoku to stream
@@ -154,7 +210,19 @@ public:
      * @param type
      *  - selected border type
      */
-    void print(std::ostream& stream, const borderTypes& type);
+    void print(std::ostream &stream, const borderTypes &type) const;
+
+    /**
+     * Method to print sudoku to stream
+     * @param stream
+     *  - selected stream
+     * @param type
+     *  - selected border type
+     * @param format
+     *  - selected format for table numbers
+     */
+    void print(std::ostream &stream, const borderTypes &type, const numberFormat &format,
+               bool areZerosVisible) const;
 
     //-------------
     // Getters
@@ -174,6 +242,20 @@ public:
      */
     SudokuPrinter::borderTypes getBorderType() const;
 
+    /**
+     * Getter for number format for numbers in the table
+     * @return
+     *  - number format
+     */
+    SudokuPrinter::numberFormat getNumberFormat() const;
+
+    /**
+     * Getter for zeros visibility for numbers in the table
+     * @return
+     *  - zeros visibility
+     */
+    bool getZerosVisibility() const;
+
     //-------------
     // Setters
     //-------------
@@ -190,7 +272,21 @@ public:
      * @param table
      *  - new printer table
      */
-    void setTable(const SudokuTable& _table);
+    void setTable(const SudokuTable &_table);
+
+    /**
+     * Set current printer number format
+     * @param format
+     *  - new number format for numbers in printer
+     */
+    void setNumberFormat(const SudokuPrinter::numberFormat &format);
+
+    /**
+     * Set current printer zeros visibility
+     * @param state
+     *  - new value for zeros visibility
+     */
+    void setZerosVisible(bool state);
 };
 
 
