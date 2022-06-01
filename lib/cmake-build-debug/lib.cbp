@@ -80,16 +80,13 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/Iterator/SudokuIterator.cpp">
-			<Option target="lib"/>
-		</Unit>
 		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/Iterator/SudokuIterator.h">
 			<Option target="lib"/>
 		</Unit>
-		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuAreas/SudokuArea.cpp">
+		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuArea/SudokuArea.cpp">
 			<Option target="lib"/>
 		</Unit>
-		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuAreas/SudokuArea.h">
+		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuArea/SudokuArea.h">
 			<Option target="lib"/>
 		</Unit>
 		<Unit filename="D:/programirovanie/githubApplications/sudoku/lib/SudokuPrinter.cpp">

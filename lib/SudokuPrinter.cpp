@@ -159,6 +159,7 @@ size_t SudokuPrinter::getLinesTypeIndex(const SudokuPrinter::borderTypes &type) 
             return 2;
         }
     }
+    return 0;
 }
 
 //-------------
@@ -305,7 +306,7 @@ void SudokuPrinter::print(std::ostream &stream, const SudokuTable &table,
  *  - selected stream
  */
 void SudokuPrinter::print(std::ostream &stream) const {
-    this->print(stream, this->getBorderType(), SudokuPrinter::numberFormat::dec, this->areZerosVisible);
+    this->print(stream, this->getBorderType(), this->format, this->areZerosVisible);
 }
 
 /**
@@ -470,5 +471,5 @@ void SudokuPrinter::setNumberFormat(const SudokuPrinter::numberFormat &_format) 
  *  - new value for zeros visibility
  */
 void SudokuPrinter::setZerosVisible(bool state) {
-    areZerosVisible = state;
+    this->areZerosVisible = state;
 }

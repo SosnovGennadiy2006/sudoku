@@ -2,11 +2,13 @@
 // Created by genas on 27.03.2022.
 //
 
-#ifndef LIB_SUDOKUPRINTER_H
-#define LIB_SUDOKUPRINTER_H
+#ifndef LIB_SUDOKU_PRINTER_H
+#define LIB_SUDOKU_PRINTER_H
 
 #include <string>
 #include <cassert>
+#include <sstream>
+#include <iterator>
 #include "SudokuTable.h"
 
 /**
@@ -38,8 +40,7 @@ public:
 
 private:
     /**
-     * Method that returns number order
-     *
+     * Method that returns number order     *
      * @param number
      *  - the number for which the order must be calculated
      * @return
@@ -80,7 +81,7 @@ private:
      * @param format
      *  - selected format (dec / hex)
      */
-    void printNumber(std::ostream &stream, int maxWidth, size_t i, size_t j,
+    virtual void printNumber(std::ostream &stream, int maxWidth, size_t i, size_t j,
                      numberFormat format, bool areZerosVisible) const;
 
     /**
@@ -94,8 +95,7 @@ private:
      * @param separator_pos
      *  - position for separator in table
      */
-    void
-    printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos) const;
+    virtual void printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos) const;
 
     /**
      * Print horizontal line between two rows
@@ -110,7 +110,7 @@ private:
      * @param borderType
      *  - selected type for separator border lines
      */
-    void printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos,
+    virtual void printHorizontalSeparator(std::ostream &stream, int maxWidth, int columns, HorizontalSeparator separator_pos,
                                   size_t borderType) const;
 
     /**
@@ -134,6 +134,7 @@ private:
      */
     static size_t getLinesTypeIndex(const SudokuPrinter::borderTypes &type);
 
+    // Sudoku table to be printed
     SudokuTable table;
 
     // The format for numbers in table
@@ -141,6 +142,7 @@ private:
 
     // Are zeros visible
     bool areZerosVisible = true;
+
 public:
     //-------------
     // Constructors and destructor
@@ -290,4 +292,4 @@ public:
 };
 
 
-#endif //LIB_SUDOKUPRINTER_H
+#endif //LIB_SUDOKU_PRINTER_H

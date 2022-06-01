@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(lib main.cpp
         SudokuTable.cpp
         SudokuTable.h
-        SudokuAreas/SudokuArea.cpp
-        SudokuAreas/SudokuArea.h
-        Iterator/SudokuIterator.cpp
+        SudokuArea/SudokuArea.cpp
+        SudokuArea/SudokuArea.h
         Iterator/SudokuIterator.h SudokuPrinter.cpp SudokuPrinter.h)
